@@ -64,12 +64,12 @@ to setup-environment   ;; load the GIS datasets
   set landuse-dataset gis:load-dataset "lc_align.tif.asc"
   gis:set-world-envelope(gis:envelope-of landuse-dataset)
   gis:apply-raster landuse-dataset landuse
-  set tick-dataset gis:load-dataset "may.asc"
+  set tick-dataset gis:load-dataset "jjan.asc"
   ;gis:set-world-envelope(gis:envelope-of tick-dataset)
   gis:apply-raster tick-dataset abundance
   set landuse-list [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17]
   set tick-list [0.048 0 0.429 0.904 1 0.857 0.620 0.571 0.476 0.285 0.476 0]
-  set out-list [0.02 0.02 0.04 0.05 0.06 0.05 0.07 0.08 0.07 0.04 0.02 0.02]
+  set out-list [0.04 0.04 0.06 0.07 0.08 0.07 0.09 0.10 0.09 0.06 0.04 0.04]
   set tick_abundance item 0 tick-list
   set out-prob item 0 out-list
   ask patches [
@@ -114,15 +114,28 @@ to bite    ;;; set the risk values
   ask persons with [activity != 0 and tick_bite = 0][
     if temperature < 5
     [set bite-prob item 3 item 0 filter [ i -> item 0 i = age-group and item 1 i = activity] prob
-    set bite-prob bite-prob * 0.1 * tick_abundance
+    set bite-prob bite-prob * 0.1
+     ifelse abundance >= 0
+      [set bite-prob bite-prob * abundance / 76]
+      [
+        set bite-prob 0]
     ]
     ifelse temperature > 10
     [set bite-prob item 3 item 0 filter [ i -> item 0 i = age-group and item 1 i = activity] prob
-    set bite-prob bite-prob * tick_abundance
+    set bite-prob bite-prob
+      ifelse abundance >= 0
+      [set bite-prob bite-prob * abundance / 76]
+      [
+        set bite-prob 0]
+
     ]
     [set bite-prob item 3 item 0 filter [ i -> item 0 i = age-group and item 1 i = activity] prob
-    set bite-prob bite-prob * 0.6 * tick_abundance
+    set bite-prob bite-prob * 0.6
+   ifelse abundance >= 0
+      [set bite-prob bite-prob * abundance / 76][
+        set bite-prob 0]
     ]
+
 
   ]
   set counter 0
@@ -188,17 +201,39 @@ end
 
 to move-2    ;; update the tick abundance per month for the whole year
 
-    if ticks mod 30 = 0 and ticks != 0 [set tick_abundance item 1 tick-list set out-prob item 1 out-list]
-    if ticks mod 60 = 0 and ticks != 0 [set tick_abundance item 2 tick-list set out-prob item 2 out-list]
-    if ticks mod 90 = 0 and ticks != 0 [set tick_abundance item 3 tick-list set out-prob item 3 out-list]
-    if ticks mod 120 = 0 and ticks != 0 [set tick_abundance item 4 tick-list set out-prob item 4 out-list]
-    if ticks mod 150 = 0 and ticks != 0 [set tick_abundance item 5 tick-list set out-prob item 5 out-list]
-    if ticks mod 180 = 0 and ticks != 0 [set tick_abundance item 6 tick-list set out-prob item 6 out-list]
-    if ticks mod 210 = 0 and ticks != 0 [set tick_abundance item 7 tick-list set out-prob item 7 out-list]
-    if ticks mod 240 = 0 and ticks != 0 [set tick_abundance item 8 tick-list set out-prob item 8 out-list]
-    if ticks mod 270 = 0 and ticks != 0 [set tick_abundance item 9 tick-list set out-prob item 9 out-list]
-    if ticks mod 300 = 0 and ticks != 0 [set tick_abundance item 10 tick-list set out-prob item 10 out-list]
-    if ticks mod 330 = 0 and ticks != 0 [set tick_abundance item 11 tick-list set out-prob item 11 out-list]
+    if ticks mod 30 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "feb.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 1 out-list]
+    if ticks mod 60 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "mar.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 2 out-list]
+    if ticks mod 90 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "apr.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 3 out-list]
+    if ticks mod 120 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "mmmay.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 4 out-list]
+    if ticks mod 150 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "jjune.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 5 out-list]
+    if ticks mod 180 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "july.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 6 out-list]
+    if ticks mod 210 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "aug.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 7 out-list]
+    if ticks mod 240 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "sep.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 8 out-list]
+    if ticks mod 270 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "oct.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 9 out-list]
+    if ticks mod 300 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "nov.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 10 out-list]
+    if ticks mod 330 = 0 and ticks != 0 [set tick-dataset gis:load-dataset "dec.asc"
+  ;gis:set-world-envelope(gis:envelope-of tick-dataset)
+  gis:apply-raster tick-dataset abundance set out-prob item 11 out-list]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -418,6 +453,17 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "histogram [lu] of persons with [tick_bite = 1]"
+
+MONITOR
+380
+151
+480
+196
+People in forest
+count persons with [tick_bite = 0 and activity != 0]
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
